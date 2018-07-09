@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <!--
+            Invoice (Search):
+                Ovverriden from account
+        -->
+
+        <record id="account.view_account_invoice_filter" model="ir.ui.view">
+            <field name="name">account.invoice.select</field>
+            <field name="model">account.invoice</field>
+            <field name="arch" type="xml">
+                <search string="Search Invoice">
+                    <field name="number" string="Invoice" filter_domain="['|','|','|', ('number','ilike',self), ('origin','ilike',self), ('reference', 'ilike', self), ('partner_id', 'child_of', self)]"/>
+                    <field name="journal_id" />
+                    <field name="lead_id"/>
+                    <filter name="draft" string="Draft" domain="[('state','in',('draft', 'proforma'))]"/>
+                    <filter name="proforma" string="Proforma" domain="[('state','=','proforma2')]" groups="account.group_proforma_invoices"/>
+                    <filter name="invoices" string="Invoices" domain="['&amp;', ('state','in',['open','paid']),('type','in',('out_invoice','in_invoice'))]"/>
+                    <filter name="refunds" string="Refunds" domain="['&amp;', ('state','in',['open','paid']),('type','in',('out_refund','in_refund'))]"/>
+                    <separator/>
+                    <filter name="unpaid" string="Not Paid" domain="[('state','=','open')]"/>
+                    <filter name="late" string="Overdue" domain="['&amp;', ('date_due', '&lt;', time.strftime('%%Y-%%m-%%d')), ('state', '=', 'open')]" help="Overdue invoices, maturity date passed"/>
+                    <separator/>
+                    <field name="partner_id" operator="child_of"/>
+                    <field name="user_id" string="Sales Person"/>
+                    <field name="date" string="Period"/>
+                    <separator/>
+                    <filter domain="[('user_id','=',uid)]" help="My Invoices"/>
+                    <group expand="0" string="Group By">
+                        <filter name="group_by_partner_id" string="Partner" context="{'group_by':'commercial_partner_id'}"/>
+                        <filter string="Sales Person" context="{'group_by':'user_id'}"/>
+                        <filter name="status" string="Status" context="{'group_by':'state'}"/>
+                        <separator/>
+                        <filter string="Invoice Date" context="{'group_by':'date_invoice'}"/>
+                        <filter string="Due Date" context="{'group_by':'date_due'}"/>
+                    </group>
+               </search>
+            </field>
+        </record>
+
+
+        <!--
+            Invoice (Tree):
+                Inherited from account
+        -->
+        <record id="pq_invoice_tree_inherit" model="ir.ui.view">
+            <field name="name">pq_invoice_tree_inherit</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_tree"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='origin']" position="before">
+                    <field name="lead_id"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!--
+            Invoice (Form):
+                Inherited from account
+        -->
+        <record id="pq_invoice_tree_inherit1" model="ir.ui.view">
+            <field name="name">pq_invoice_tree_inherit1</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <!--<xpath expr="//button[@name='action_invoice_open']" position="replace"/>-->
+
+                <xpath expr="//button[@name='action_invoice_open']" position="attributes">
+                    <attribute name="class">oe_highlight</attribute>
+                </xpath>
+
+                <!--<xpath expr="//button[@name='action_invoice_proforma2']" position="attributes">-->
+                    <!--<attribute name="class">oe_highlight</attribute>-->
+                <!--</xpath>-->
+            </field>
+        </record>
+
+
+        <!--
+            Invoice (Form):
+                Inherited from sale
+        -->
+        <record id="pq_invoice_form_inherit" model="ir.ui.view">
+            <field name="name">pq_invoice_form_inherit</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="sale.account_invoice_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='team_id']" position="after">
+                    <field name="lead_id" readonly="1"/>
+                </xpath>
+                <xpath expr="//notebook[last()]" position="inside">
+                    <page string="Remarks">
+                        <field name="remarks"/>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+
+
+
+        <!--
+           Supplier Invoice (Tree):
+                Inherited from account
+        -->
+        <record id="pq_invoice_supplier_tree_inherit" model="ir.ui.view">
+            <field name="name">pq_invoice_supplier_tree_inherit</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_tree"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='origin']" position="before">
+                    <field name="lead_id"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <!--
+            Supplier Invoice (Form):
+                Inherited from account(supplier)
+        -->
+        <record id="pq_invoice_supplier_form_inherit" model="ir.ui.view">
+            <field name="name">pq_invoice_supplier_form_inherit</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='date_due']" position="after">
+                    <field name="lead_id" readonly="1"/>
+                </xpath>
+                <xpath expr="//notebook[last()]" position="inside">
+                    <page string="Remarks">
+                        <field name="remarks"/>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

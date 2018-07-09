@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_pantaq_configuration" model="ir.ui.view">
+            <field name="name">Pantaq Settings</field>
+            <field name="model">pantaq.config.settings</field>
+            <field name="arch" type="xml">
+                <form string="Pantaq Settings" class="oe_form_configuration">
+                    <header>
+                        <button string="Apply" type="object" name="execute" class="oe_highlight"/>
+                        <button string="Cancel" type="object" name="cancel" class="oe_link"/>
+                    </header>
+                    <separator string="Pantaq Settings"/>
+
+                    <group name="margin_threshold">
+                        <label for="id" string="Margin Threshold"/>
+                        <div>
+                            <div>
+                                <label for="purchase_markup"
+                                       string="Margin/Markup for Procurement"/>
+                                <field name="purchase_markup" class="oe_inline"/>
+                                <label string="%%" />
+                            </div>
+                            <div>
+                                <label for="sale_markup"
+                                       string="Margin/Markup for Sales"/>
+                                <field name="sale_markup" class="oe_inline" />
+                                <label string="%%" />
+                            </div>
+                        </div>
+                    </group>
+
+
+                </form>
+            </field>
+        </record>
+
+        <record id="action_pantaq_configuration" model="ir.actions.act_window">
+            <field name="name">Pantaq Settings</field>
+            <field name="res_model">pantaq.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+        </record>
+
+        <menuitem id="menu_pantaq_config" name="Pantaq Settings" parent="base.menu_administration"
+                  sequence="2" action="action_pantaq_configuration"/>
+    </data>
+</odoo>

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+
+
+        <!--
+            Enquiry: Submitted
+                   Not Used any more::
+
+        <record id="email_enquiry_submit" model="mail.template">
+            <field name="name">Pantaq: Enquiry Submitted</field>
+            <field name="model_id" ref="crm.model_crm_lead"/>
+            <field name="subject"><![CDATA[Enquiry Submitted (Ref: ${object.enq_number})]]></field>
+            <field name="body_html"><![CDATA[
+<div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#777777">
+
+    <p>
+        Enquiry ${object.enq_number} has been submitted by ${user.name}.
+    </p>
+    </br>
+    <p>Best regards,</p>
+</div>
+<div style="padding:0px;width:600px;margin:auto; margin-top: 10px; background: #fff repeat top /100%;color:#777777">
+    ${user.signature | safe}
+    <p style="font-size: 11px; margin-top: 10px;">
+        <strong>Sent by ${user.company_id.name} using <a href="www.odoo.com" style="text-decoration:none; color: #875A7B;">Odoo</a></strong>
+    </p>
+</div>]]></field>
+        </record>
+         -->
+
+        <!--
+            Enquiry: Cancelled
+                Not Used any more::
+
+        <record id="email_enquiry_cancelled" model="mail.template">
+            <field name="name">Pantaq: Enquiry Cancelled</field>
+            <field name="model_id" ref="crm.model_crm_lead"/>
+            <field name="subject"><![CDATA[Enquiry Cancelled (Ref: ${object.enq_number})]]></field>
+            <field name="body_html"><![CDATA[
+<div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#777777">
+
+    <p>
+        Enquiry ${object.enq_number} has been cancelled by ${user.name}.
+    </p>
+    </br>
+    <p>Best regards,</p>
+</div>
+<div style="padding:0px;width:600px;margin:auto; margin-top: 10px; background: #fff repeat top /100%;color:#777777">
+    ${user.signature | safe}
+    <p style="font-size: 11px; margin-top: 10px;">
+        <strong>Sent by ${user.company_id.name} using <a href="www.odoo.com" style="text-decoration:none; color: #875A7B;">Odoo</a></strong>
+    </p>
+</div>]]></field>
+        </record>
+         -->
+
+
+        <!--
+            IQ: Submitted
+                Not needed any more
+
+        <record id="email_intqtn_submit" model="mail.template">
+            <field name="name">Pantaq: IQ Submitted</field>
+            <field name="model_id" ref="Pantaq.model_internal_order"/>
+            <field name="subject"><![CDATA[Re: ${object.name} (Ref:  ${object.lead_id.enq_number})]]></field>
+            <field name="body_html"><![CDATA[
+<div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#777777">
+
+    <p>
+        Internal Quotation ${object.name} has been submitted by ${user.name}.
+    </p>
+    </br>
+    <p>Best regards,</p>
+</div>
+<div style="padding:0px;width:600px;margin:auto; margin-top: 10px; background: #fff repeat top /100%;color:#777777">
+    ${user.signature | safe}
+    <p style="font-size: 11px; margin-top: 10px;">
+        <strong>Sent by ${user.company_id.name} using <a href="www.odoo.com" style="text-decoration:none; color: #875A7B;">Odoo</a></strong>
+    </p>
+</div>]]></field>
+        </record>
+         -->
+
+
+        <!--
+            IQ: Revised
+                Not needed any more
+
+        <record id="email_intqtn_revised" model="mail.template">
+            <field name="name">Pantaq: IQ Revised</field>
+            <field name="model_id" ref="Pantaq.model_internal_order"/>
+            <field name="subject"><![CDATA[Re: ${object.name} (Ref:  ${object.lead_id.enq_number})]]></field>
+            <field name="body_html"><![CDATA[
+<div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#777777">
+
+    <p>
+        Internal Quotation ${object.name} has been revised by ${user.name}.
+    </p>
+    </br>
+    <p>Best regards,</p>
+</div>
+<div style="padding:0px;width:600px;margin:auto; margin-top: 10px; background: #fff repeat top /100%;color:#777777">
+    ${user.signature | safe}
+    <p style="font-size: 11px; margin-top: 10px;">
+        <strong>Sent by ${user.company_id.name} using <a href="www.odoo.com" style="text-decoration:none; color: #875A7B;">Odoo</a></strong>
+    </p>
+</div>]]></field>
+        </record>
+        -->
+
+        <!--
+            IQ: Rejected
+                Not needed any more
+
+        <record id="email_intqtn_rejected" model="mail.template">
+            <field name="name">Pantaq: IQ Rejected</field>
+            <field name="model_id" ref="Pantaq.model_internal_order"/>
+            <field name="subject"><![CDATA[Re: ${object.name} (Ref:  ${object.lead_id.enq_number})]]></field>
+            <field name="body_html"><![CDATA[
+<div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#777777">
+
+    <p>
+        Internal Quotation ${object.name} has been rejected by ${user.name}.
+    </p>
+    </br>
+    <p>Best regards,</p>
+</div>
+<div style="padding:0px;width:600px;margin:auto; margin-top: 10px; background: #fff repeat top /100%;color:#777777">
+    ${user.signature | safe}
+    <p style="font-size: 11px; margin-top: 10px;">
+        <strong>Sent by ${user.company_id.name} using <a href="www.odoo.com" style="text-decoration:none; color: #875A7B;">Odoo</a></strong>
+    </p>
+</div>]]></field>
+        </record>
+        -->
+
+        <!--
+            IQ: Cancelled
+                 Note needed any more
+        <record id="email_intqtn_cancelled" model="mail.template">
+            <field name="name">Pantaq: IQ Cancelled</field>
+            <field name="model_id" ref="Pantaq.model_internal_order"/>
+            <field name="subject"><![CDATA[Re: ${object.name} (Ref:  ${object.lead_id.enq_number})]]></field>
+            <field name="body_html"><![CDATA[
+<div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#777777">
+
+    <p>
+        Internal Quotation ${object.name} has been cancelled by ${user.name}.
+    </p>
+    </br>
+    <p>Best regards,</p>
+</div>
+<div style="padding:0px;width:600px;margin:auto; margin-top: 10px; background: #fff repeat top /100%;color:#777777">
+    ${user.signature | safe}
+    <p style="font-size: 11px; margin-top: 10px;">
+        <strong>Sent by ${user.company_id.name} using <a href="www.odoo.com" style="text-decoration:none; color: #875A7B;">Odoo</a></strong>
+    </p>
+</div>]]></field>
+        </record>
+         -->
+
+
+
+        <!--
+            IQ: Need Approval
+         -->
+        <record id="email_needapproval_intqtn" model="mail.template">
+            <field name="name">Pantaq: Need Approval for IQ</field>
+            <field name="model_id" ref="Pantaq.model_internal_order"/>
+            <field name="subject"><![CDATA[Need Approval for IQ]]></field>
+            <field name="body_html"><![CDATA[
+<div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#777777">
+
+    <p>
+
+        Margin set by ${user.name} in the Internal Quotation ${object.name} needs your approval.
+    </p>
+    <p>Best regards,</p>
+</div>
+<div style="padding:0px;width:600px;margin:auto; margin-top: 10px; background: #fff repeat top /100%;color:#777777">
+    ${user.signature | safe}
+    <p style="font-size: 11px; margin-top: 10px;">
+        <strong>Sent by ${user.company_id.name} using <a href="www.odoo.com" style="text-decoration:none; color: #875A7B;">Odoo</a></strong>
+    </p>
+</div>]]></field>
+        </record>
+
+        <!--
+            Invoice: Quoted Approved
+         -->
+        <record id="email_quotes_approved" model="mail.template">
+            <field name="name">Pantaq: Notify Approved Quotes to Procurement</field>
+            <field name="model_id" ref="Pantaq.model_account_invoice"/>
+            <field name="subject"><![CDATA[Quotes Approved/Invoiced]]></field>
+            <field name="body_html"><![CDATA[
+<div style="padding:0px;width:600px;margin:auto;background: #FFFFFF repeat top /100%;color:#777777">
+
+    <p>
+
+        Following Quotes are approved.
+    </p>
+    <p>Best regards,</p>
+</div>
+<div style="padding:0px;width:600px;margin:auto; margin-top: 10px; background: #fff repeat top /100%;color:#777777">
+    ${user.signature | safe}
+    <p style="font-size: 11px; margin-top: 10px;">
+        <strong>Sent by ${user.company_id.name} using <a href="www.odoo.com" style="text-decoration:none; color: #875A7B;">Odoo</a></strong>
+    </p>
+</div>]]></field>
+        </record>
+
+
+
+
+    </data>
+</odoo>

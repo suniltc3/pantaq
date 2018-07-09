@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--
+            Invoice Workflow:
+            overridden
+        -->
+        <record id="account.act_proforma2" model="workflow.activity">
+            <field name="wkf_id" ref="account.wkf"/>
+            <field name="name">proforma2</field>
+            <field name="action">action_notify_procurement()
+write({'state':'proforma2'})</field>
+            <field name="kind">function</field>
+        </record>
+
+
+        <record id="account.act_open" model="workflow.activity">
+            <field name="wkf_id" ref="account.wkf"/>
+            <field name="name">open</field>
+            <field name="action">action_date_assign()
+action_create_InvNumber()
+action_move_create()
+invoice_validate()</field>
+            <field name="kind">function</field>
+        </record>
+
+
+    </data>
+</odoo>

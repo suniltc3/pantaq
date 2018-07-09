@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <!--
+            Internal Quotation:
+                Kanban View
+        -->
+        <record model="ir.ui.view" id="view_internalQtn_kanban">
+            <field name="name">view_internalQtn_kanban</field>
+            <field name="model">internal.order</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <field name="name"/>
+                    <field name="lead_id"/>
+                    <field name="partner_id" groups="sales_team.group_sale_salesman"/>
+                    <field name="amount_total"/>
+                    <field name="date_order"/>
+                    <field name="state"/>
+                    <field name="currency_id"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <strong><span><t t-esc="record.lead_id.value"/></span></strong>
+                                    </div>
+                                    <div class="col-xs-6 pull-right text-right">
+                                        <strong><field name="amount_total" widget="monetary"/></strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-6" groups="sales_team.group_sale_salesman">
+                                        <strong><span><t t-esc="record.partner_id.value"/></span></strong>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-6 text-muted">
+                                        <span><t t-esc="record.name.value"/> <t t-esc="record.date_order.value"/></span>
+                                    </div>
+                                    <div class="col-xs-6">
+                                        <span t-attf-class="pull-right text-right label #{['draft', 'cancel'].indexOf(record.state.raw_value) > -1 ? 'label-default' : ['done'].indexOf(record.state.raw_value) > -1 ? 'label-success' : 'label-primary'}"><t t-esc="record.state.value"/></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
+        <!--
+            Internal Quotation:
+                Tree View
+        -->
+        <record id="view_internalQtn_filter" model="ir.ui.view">
+            <field name="name">view_internalQtn_filter</field>
+            <field name="model">internal.order</field>
+            <field name="arch" type="xml">
+                <search string="Search Internal Quotation">
+                    <field name="name" />
+                    <field name="partner_id" operator="child_of" groups="sales_team.group_sale_salesman"/>
+                    <field name="salesman_id" groups="sales_team.group_sale_salesman"/>
+                    <field name="user_id" groups="purchase.group_purchase_user"/>
+                    <!--<field name="team_id" string="Sales Team"/>-->
+                    <field name="lead_id" />
+                    <field name="product_id"/>
+                    <separator/>
+                    <filter string="Unread Messages" name="message_needaction" domain="[('message_needaction','=',True)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Owner" domain="[]" context="{'group_by':'user_id'}" groups="purchase.group_purchase_user"/>
+                        <filter string="Sales Person" domain="[]" context="{'group_by':'saleman_id'}" groups="sales_team.group_sale_salesman"/>
+                        <filter name="customer" string="Customer" domain="[]" context="{'group_by':'partner_id'}" groups="sales_team.group_sale_salesman"/>
+                        <filter string="Order Month" domain="[]" context="{'group_by':'date_order'}"/>
+                        <filter string="Status" domain="[]" context="{'group_by':'state'}"/>
+                    </group>
+               </search>
+            </field>
+        </record>
+
+        <!--
+            Internal Quotation:
+                Tree View
+        -->
+        <record id="view_internalQtn_tree" model="ir.ui.view">
+            <field name="name">view_internalQtn_tree</field>
+            <field name="model">internal.order</field>
+            <field name="priority">2</field>
+            <field name="arch" type="xml">
+                <tree string="Internal Quotation" decoration-bf="message_needaction==True" decoration-muted="state in ('cancel','revised')"
+                      decoration-info="state in ('submit')" decoration-danger="is_rejected==True">
+                    <field name="message_needaction" invisible="1"/>
+                    <field name="name" string="Reference"/>
+                    <field name="date_order"/>
+                    <field name="lead_id" />
+                    <field name="partner_id" groups="sales_team.group_sale_salesman"/>
+                    <field name="salesman_id" groups="sales_team.group_sale_salesman"/>
+                    <field name="user_id" groups="purchase.group_purchase_user"/>
+                    <field name="amount_total" sum="Total Tax Included" widget="monetary"/>
+                    <field name="state" />
+                    <field name="is_rejected" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <!--
+            Internal Quotation:
+                Form View
+        -->
+        <record id="view_internalQtn_form" model="ir.ui.view">
+            <field name="name">view_internalQtn_form</field>
+            <field name="model">internal.order</field>
+            <field name="arch" type="xml">
+                <form string="Internal Quotation">
+                <header>
+                    <button name="action_submit" states="draft" string="Submit" type="object" groups="purchase.group_purchase_user" class="oe_highlight"/>
+                    <button name="action_create_CustQuote" states="submit" type="object" string="Convert to Customer Quote"
+                            groups="sales_team.group_sale_salesman" class="oe_highlight"/>
+                    <button name="action_revised" groups="purchase.group_purchase_user" states="draft,submit,quoted" type="object" string="Revised"/>
+                    <button name="action_draft" states="cancel" type="object" string="Reset to Quotation"/>
+                    <button name="action_cancel" groups="purchase.group_purchase_user"  states="draft" type="object" string="Cancel"/>
+                    <button name="action_rejected" states="draft,submit" type="object" string="Rejected"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submit,quoted"/>
+                </header>
+
+                <div class="alert alert-info" role="alert" style="margin-bottom:0px;" attrs="{'invisible': [('is_rejected','=',False)]}">
+                    Customer has rejected this quote. Please submit a revised one.
+                </div>
+                <field name="is_rejected" invisible="1"/>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id" groups="sales_team.group_sale_salesman"
+                                   domain="[('customer','=',True)]" context="{'search_default_customer':1, 'show_address': 1}"
+                                   options='{"always_reload": True}'/>
+                            <field name="lead_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="date_order" />
+                            <field name="validity_date"/>
+                            <field name="currency_id" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Quotation Lines">
+                            <field name="order_line" mode="tree,kanban"
+                                attrs="{'readonly': [('state', 'in', ('done','cancel'))]}">
+                                <form string="Quotation Lines">
+                                    <group>
+                                        <group>
+                                            <field name="product_id" readonly="1"/>
+                                            <label for="product_uom_qty" string="Quantity"/>
+                                            <div>
+                                                <field name="product_uom_qty" class="oe_inline"/>
+                                                <field name="product_uom" class="oe_inline oe_no_button"
+                                                   readonly="1"/>
+                                            </div>
+                                        </group>
+                                        <group>
+                                            <field name="rfqline_id" string="RFQ Ref." groups="purchase.group_purchase_user"/>
+                                            <field name="supplier_id" groups="purchase.group_purchase_user"/>
+                                            <field name="vendor_type" groups="purchase.group_purchase_user" />
+                                        </group>
+                                        <newline/>
+                                        <group>
+                                            <field name="price_cost" groups="purchase.group_purchase_user"/>
+                                        </group>
+                                        <group>
+                                            <field name="target_price" widget="monetary" options="{'currency_field': 'target_currency_id'}"
+                                                    help="Target Price/Cost quoted by the Customer" string="Target Cost"/>
+                                            <field name="target_currency_id" invisible="1"/>
+                                        </group>
+                                        <newline/>
+                                        <group>
+                                            <label for="margin" groups="purchase.group_purchase_user"/>
+                                            <div name="margin" groups="purchase.group_purchase_user">
+                                                <field name="margin_perc" class="oe_inline"/> %%
+                                                <field name="margin" class="oe_inline"/>
+                                            </div>
+                                            <label for="discount" groups="purchase.group_purchase_user"/>
+                                            <div name="discount" groups="purchase.group_purchase_user">
+                                                <field name="discount_perc" class="oe_inline"/> %%
+                                                <field name="discount" class="oe_inline"/>
+                                            </div>
+                                            <field name="price_subtotal" widget="monetary"/>
+                                        </group>
+                                        <group>
+                                            <field name="price_unit" groups="purchase.group_purchase_user"/>
+                                            <field name="sales_price_cost" string="Cost" groups="sales_team.group_sale_salesman"/>
+                                            <field name="tax_id" widget="many2many_tags" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"/>
+                                        </group>
+                                    </group>
+                                    <label for="name"/>
+                                    <field name="name"/>
+                                    <newline/>
+                                    <group>
+                                        <group>
+                                            <field name="hs_code"/>
+                                        </group>
+                                        <group>
+                                            <!--<field name="rfq_currency_id" />-->
+                                            <field name="currency_id" />
+                                        </group>
+                                    </group>
+                                    <field name="state" invisible="1"/>
+                                    <field name="show_approval" invisible="1"/>
+                                    <field name="show_reject" invisible="1"/>
+
+                                    <group name="approval-group">
+                                        <label for="approval_state" attrs="{'invisible':[('approval_state','=',False)]}" />
+                                        <div>
+                                            <field name="approval_state" attrs="{'invisible':[('approval_state','=',False)]}" class="oe_inline"/>
+                                            <button name="button_toggle_approve"  help="Click this to Approve"
+                                                    attrs="{'invisible': [('show_approval', '=', False)]}" string="" type="object" icon="fa-check"/>
+                                            <button name="button_toggle_reject"  help="Click this to Reject"
+                                                    attrs="{'invisible': [('show_reject', '=', False)]}" string="" type="object" icon="fa-times"/>
+                                        </div>
+                                    </group>
+
+                                </form>
+                                <tree string="Quotation Lines" colors="blue:approval_state == 'awaiting';red:approval_state == 'rejected';green:approval_state == 'approved';">
+                                    <field name="rfqline_id" string="RFQ Ref." groups="purchase.group_purchase_user"/>
+                                    <field name="vendor_type" groups="purchase.group_purchase_user"/>
+                                    <field name="product_id"/>
+                                    <field name="name" string="Product Desciption"/>
+                                    <field name="hs_code"/>
+                                    <field name="product_uom_qty" string="Qty"/>
+                                    <field name="product_uom" string="UoM"
+                                        attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}"
+                                        context="{'company_id': parent.company_id}"
+                                        options='{"no_open": True}'
+                                        help="Unit of Measure"/>
+                                    <field name="price_cost" readonly="1" groups="purchase.group_purchase_user"/>
+                                    <!--<field name="margin_perc" groups="purchase.group_purchase_user"/>-->
+                                    <field name="margin"    groups="purchase.group_purchase_user"/>
+                                    <field name="price_unit" groups="purchase.group_purchase_user"/>
+                                    <!--<field name="tax_id" widget="many2many_tags" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"/>-->
+                                    <!--<field name="discount_perc" groups="purchase.group_purchase_user"/>-->
+                                    <field name="discount"      groups="purchase.group_purchase_user"/>
+                                    <field name="sales_price_cost" string="Cost" groups="sales_team.group_sale_salesman"/>
+                                    <!--<field name="price_subtotal" widget="monetary"/> todo -->
+                                    <field name="price_subtotal" />
+                                    <field name="target_price" widget="monetary" options="{'currency_field': 'target_currency_id'}"
+                                            help="Target Price/Cost quoted by the Customer" string="Target Cost"/>
+                                    <field name="target_currency_id" invisible="1"/>
+                                    <field name="state" invisible="1"/>
+                                    <field name="approval_state" invisible="1"/>
+                                    <field name="show_approval" invisible="1"/>
+                                    <field name="show_reject" invisible="1"/>
+                                    <button name="button_toggle_approve" help="Click this to Approve"
+                                            attrs="{'invisible': [('show_approval', '=', False)]}" string="" type="object" icon="fa-check"/>
+                                    <button name="button_toggle_reject"  help="Click this to Reject"
+                                            attrs="{'invisible': [('show_reject', '=', False)]}" string="" type="object" icon="fa-times"/>
+                                </tree>
+                                <kanban class="o_kanban_mobile">
+                                    <field name="product_id"/>
+                                    <field name="product_uom_qty"/>
+                                    <field name="product_uom" />
+                                    <field name="price_subtotal"/>
+                                    <templates>
+                                        <t t-name="kanban-box">
+                                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <strong><span><t t-esc="record.product_id.value"/></span></strong>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-xs-8 text-muted">
+                                                        <span><t t-esc="record.product_uom_qty.value"/> <t t-esc="record.product_uom.value"/></span>
+                                                    </div>
+                                                    <div class="col-xs-4 text-muted">
+                                                        <span class="pull-right text-right"><t t-esc="record.price_subtotal.value"/></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+                                <field name="amount_untaxed" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                                <field name="amount_tax" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                                <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                                    <label for="amount_total" />
+                                    <button name="button_dummy"
+                                        states="draft" string="(update)" type="object" class="oe_edit_only oe_link"/>
+                                </div>
+                                <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                            <field name="note" class="oe_inline" placeholder="Setup default terms and conditions in your company settings."/>
+                            <div class="oe_clear"/>
+                        </page>
+                        <page string="Remarks">
+                            <field name="remarks" />
+                        </page>
+                        <page string="Other Information">
+                            <group>
+                                <group string="Information" name="other_info">
+                                    <field name="salesman_id" groups="sales_team.group_sale_salesman"/>
+                                    <field name="user_id" context="{'default_groups_ref': ['base.group_user', 'purchase.group_purchase_user']}" groups="purchase.group_purchase_user"/>
+                                    <field name="team_id" options="{'no_create': True}" invisible="1"/>
+                                    <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_internal_quotations" model="ir.actions.act_window">
+            <field name="name">Internal Quotations</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">internal.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="search_view_id" ref="view_internalQtn_filter"/>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Create an Internal Quotation.
+                </p>
+            </field>
+        </record>
+
+
+        <menuitem id="menu_purchase_internalquotations"
+            action="action_internal_quotations" parent="purchase.menu_procurement_management"
+            sequence="4"/>
+
+        <record id="action_internal_quotations_confirmed" model="ir.actions.act_window">
+            <field name="name">Internal Quotations</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">internal.order</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="search_view_id" ref="view_internalQtn_filter"/>
+            <field name="context">{}</field>
+            <field name="domain">[('state', 'in', ('submit', 'quoted', 'done'))]</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Create an Internal Quotation.
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_sale_internalquotations"
+            action="action_internal_quotations_confirmed" parent="sale.sale_order_menu"
+            sequence="3"/>
+
+
+
+        <!--
+            Internal Qtn Views in Enquiry/Lead
+        -->
+
+        <record id="action_intqtn4lead" model="ir.actions.act_window">
+            <field name="name">Internal Quotation</field>
+            <field name="res_model">internal.order</field>
+            <field name="domain">[('lead_id', '=', active_id)]</field>
+            <field name="context">{'search_default_lead_id': [active_id], 'default_lead_id': active_id}</field>
+        </record>
+
+        <record id="action_intqtn4lead_submit" model="ir.actions.act_window">
+            <field name="name">Internal Quotation</field>
+            <field name="res_model">internal.order</field>
+            <field name="domain">[('lead_id', '=', active_id), ('state', 'in', ('submit', 'done'))]</field>
+            <field name="context">{'search_default_lead_id': [active_id], 'default_lead_id': active_id}</field>
+        </record>
+
+        <!--
+            Internal Qtn Views in Enquiry
+            Lead Form: Inherited
+        -->
+
+        <record model="ir.ui.view" id="crm_case_form_view_oppor_inherit2">
+            <field name="name">CRM - Enquiry - IQ Inherit</field>
+            <field name="model">crm.lead</field>
+            <field name="inherit_id" ref="Pantaq.view_crm_enquiry_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <div name="button_box" position="inside">
+                        <button class="oe_stat_button" type="action"
+                                name="%(action_intqtn4lead)d" icon="fa-bookmark-o"
+                                groups="purchase.group_purchase_user">
+                            <div class="o_stat_info">
+                                <field name="intord1_count" class="o_stat_value"/>
+                                <span class="o_stat_text"> Internal Qtn(s) </span>
+                            </div>
+                        </button>
+                    </div>
+                    <div name="button_box" position="inside">
+                        <button class="oe_stat_button" type="action"
+                                name="%(action_intqtn4lead_submit)d" icon="fa-bookmark-o"
+                                groups="sales_team.group_sale_salesman">
+                            <div class="o_stat_info">
+                                <field name="intord2_count" class="o_stat_value"/>
+                                <span class="o_stat_text"> Internal Qtn(s) </span>
+                            </div>
+                        </button>
+                    </div>
+                </data>
+            </field>
+        </record>
+
+
+
+    </data>
+</odoo>

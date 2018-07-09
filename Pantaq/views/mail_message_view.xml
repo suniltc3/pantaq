@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+        <!--
+            pq.mail.message: (tree)
+            !-->
+        <record model="ir.ui.view" id="view_pqmail_message_tree">
+            <field name="name">view_pqmail_message_tree</field>
+            <field name="model">pq.mail.message</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <tree string="Messages">
+                    <field name="date"/>
+                    <field name="subject"/>
+                    <field name="author_id"/>
+                    <field name="model"/>
+                    <field name="res_id"/>
+                </tree>
+            </field>
+        </record>
+
+         <!--
+            pq.mail.message:  (form)
+         !-->
+        <record model="ir.ui.view" id="view_pqmail_message_form">
+            <field name="name">view_pqmail_message_form</field>
+            <field name="model">pq.mail.message</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form string="Message">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="subject"/>
+                                <field name="date"/>
+                                <field name="email_from"/>
+                                <field name="author_id"/>
+                                <field name="record_name"/>
+                            </group>
+                            <group>
+                                <!--<field name="parent_id"/>-->
+                                <field name="model"/>
+                                <field name="res_id"/>
+                                <field name="message_type"/>
+                                <field name="subtype_id"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Body">
+                                <field name="body" options="{'style-inline': true}"/>
+                            </page>
+                            <page string="Gateway">
+                                <group>
+                                    <group>
+                                        <field name="reply_to"/>
+                                        <field name="no_auto_thread"/>
+                                    </group>
+                                    <group>
+                                        <field name="message_id"/>
+                                        <field name="mail_server_id"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Recipients">
+                                <group>
+                                    <!--<field name="partner_ids" widget="many2many_tags"/>-->
+                                    <!--<field name="channel_ids" widget="many2many_tags"/>-->
+                                    <!--<field name="needaction_partner_ids" widget="many2many_tags"/>-->
+                                    <!--<field name="starred_partner_ids" widget="many2many_tags"/>-->
+                                </group>
+                            </page>
+                            <!--<page string="Tracking">-->
+                                <!--<field name="tracking_value_ids"/>-->
+                            <!--</page>-->
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <!--
+            pq.mail.message: (search)
+        !-->
+        <record model="ir.ui.view" id="view_pqmail_message_search">
+            <field name="name">view_pqmail_message_search</field>
+            <field name="model">pq.mail.message</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <search string="Messages Search">
+                    <field name="body" string="Content" filter_domain="['|', ('subject', 'ilike', self), ('body', 'ilike', self)]" />
+                    <field name="subject"/>
+                    <field name="message_type"/>
+                    <field name="author_id"/>
+                    <field name="partner_ids"/>
+                    <field name="model"/>
+                    <field name="res_id"/>
+                    <!--<field name="parent_id"/>-->
+                    <filter string="Need Action"
+                            name="message_needaction" help="Unread messages"
+                            domain="[('needaction', '=', True)]"/>
+                    <separator/>
+                    <filter string="Has attachments"
+                            name="attachments"
+                            domain="[('attachment_ids', '!=', False)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_view_pqmail_message" model="ir.actions.act_window">
+            <field name="name">Messages</field>
+            <field name="res_model">pq.mail.message</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_pqmail_message_search"/>
+        </record>
+
+        <!-- Add menu entry in Settings/Email -->
+        <menuitem name="PQ Messages" id="menu_pqmail_message"
+                  parent="base.menu_email"
+                  action="action_view_pqmail_message"/>
+
+
+    </data>
+</openerp>

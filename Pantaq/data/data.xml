@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+
+        <!-- Sequences for crm.lead -->
+        <record id="seq_pq_crm_lead" model="ir.sequence">
+            <field name="name">Enquiry</field>
+            <field name="code">crm.lead</field>
+            <field name="prefix">ENQ</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+
+        <!-- Sequences for RFQ (Purchase Order) -->
+        <record id="seq_pq_rfq_purchaseoder" model="ir.sequence">
+            <field name="name">RFQ</field>
+            <field name="code">rfq.order</field>
+            <field name="prefix">RFQ</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Sequences for Internal (Sale Order) -->
+        <record id="seq_pq_internal_saleoder" model="ir.sequence">
+            <field name="name">Internal Quotation</field>
+            <field name="code">internal.sale.order</field>
+            <field name="prefix">IQ</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!--
+            Stages for Lead:
+            Overridden:
+        -->
+
+        <record model="crm.stage" id="crm.stage_lead1">
+            <field name="name">New</field>
+            <field name="probability">10</field>
+            <field name="on_change">1</field>
+            <field name="sequence">1</field>
+            <field name="stage_type">new</field>
+        </record>
+
+        <record model="crm.stage" id="crm.stage_lead2">
+            <field name="name">Waiting for Quotation</field>
+            <field name="probability">20</field>
+            <field name="on_change">1</field>
+            <field name="sequence">2</field>
+            <field name="stage_type">rfq_sent</field>
+        </record>
+
+        <record model="crm.stage" id="crm.stage_lead3">
+            <field name="name">Quotation Received</field>
+            <field name="probability">30</field>
+            <field name="on_change">1</field>
+            <field name="sequence">3</field>
+            <field name="stage_type">io_created</field>
+        </record>
+        <record model="crm.stage" id="crm.stage_lead4">
+            <field name="name">Customer Quote Sent</field>
+            <field name="fold" eval="False"/>
+            <field name="probability">30</field>
+            <field name="on_change">1</field>
+            <field name="sequence">4</field>
+            <field name="stage_type">quote_sent</field>
+        </record>
+
+        <record model="crm.stage" id="pq_stage_lead6">
+            <field name="name">Expired</field>
+            <field name="fold" eval="True"/>
+            <field name="probability">30</field>
+            <field name="on_change">1</field>
+            <field name="sequence">5</field>
+        </record>
+
+        <record model="crm.stage" id="pq_stage_lead7">
+            <field name="name">Couldn't Respond</field>
+            <field name="fold" eval="True"/>
+            <field name="probability">30</field>
+            <field name="on_change">1</field>
+            <field name="sequence">6</field>
+        </record>
+
+        <record model="crm.stage" id="pq_stage_lead8">
+            <field name="name">Rejected</field>
+            <field name="fold" eval="True"/>
+            <field name="probability">30</field>
+            <field name="on_change">1</field>
+            <field name="sequence">7</field>
+        </record>
+
+        <record model="crm.stage" id="pq_stage_lead9">
+            <field name="name">Cancelled</field>
+            <field name="fold" eval="True"/>
+            <field name="probability">30</field>
+            <field name="on_change">1</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <!--
+            Removed: CRM action links
+        TODO: FIXME
+        <delete model="ir.values" search="[('id','=', ref('crm.ir_mark_as_lost'))]"/>
+        -->
+
+
+        <!-- Xero: Pem File Path -->
+        <record id="xero_pem_path" model="ir.config_parameter">
+            <field name="key">xero.pem.path</field>
+            <field name="value">/</field>
+        </record>
+
+        <!-- Xero: Consumer Key -->
+        <record id="xero_consumer_key" model="ir.config_parameter">
+            <field name="key">xero.consumer.key</field>
+            <field name="value">/</field>
+        </record>
+
+
+    </data>
+</openerp>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!--
+            Purchase: RFQ Report:
+            overridden:
+        -->
+        <template id="purchase.report_purchasequotation_document">
+
+            <t t-call="Pantaq.pq_external_layout">
+                <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})"/>
+
+                <div class="page" style="font-size: 8pt; font-family: Calibri,Helvetica,Verdana,Arial,sans,Lucida Grande;">
+
+                    <div class="oe_structure"/>
+
+                    <div class="row" style="padding-top:0px;">
+                        <div class="col-xs-6" style="padding:0px;">
+
+                            <p style="font-size: 17pt; font-style: bold">REQUEST FOR QUOTATION </p>
+
+                            <div t-field="o.partner_id" style="padding-left:25px;"
+                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true, "phone_icons": false}'/>
+                                <p t-if="o.partner_id.company_type == 'company'" style="padding-left:25px;">Attention: <span t-field="o.partner_id.attn_contact"/></p>
+                                <p t-if="o.partner_id.vat" style="padding-left:25px;">VAT: <span t-field="o.partner_id.vat"/></p>
+
+                        </div>
+                        <div class="col-xs-5 col-xs-offset-1" style="padding:0px;">
+                            <div class="col-xs-5">
+                                <strong>RFQ Date</strong>
+                                <br/>
+                                <span t-field="o.date_order" t-field-options='{"format": "d MMM y"}'/>
+                                <p/>
+                                <p/>
+                                <strong>RFQ Number</strong>
+                                <br/>
+                                <span t-field="o.name"/>
+                                <p/>
+                                <p/>
+                                <strong>Due Date</strong>
+                                <br/>
+                                <span t-field="o.date_planned" t-field-options='{"format": "d MMM y"}'/>
+                                <p/>
+                                <p/>
+                                <span t-if="o.company_id.vat"><strong>VAT Number</strong></span>
+                                <br/>
+                                <span t-if="o.company_id.vat" t-field="o.company_id.vat"/>
+                            </div>
+                            <div class="col-xs-7" style="padding-left:0px;">
+                                <span t-field="o.company_id.name"/>
+                                <div t-field="o.company_id.partner_id"
+                                    t-field-options='{"widget": "contact", "fields": ["address", "phone", "fax", "email", "website"], "no_marker": true, "phone_icons": false}'/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p/>
+                    <p/>
+
+                    <t t-set="pc_cnt" t-value="0"/>
+                    <t t-foreach="o.order_line" t-as="ln">
+                        <t t-if="ln.product_id.default_code and ln.product_id.default_code is not false">
+                            <t t-set="pc_cnt" t-value="pc_cnt+1"/>
+                        </t>
+                    </t>
+
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th t-if="pc_cnt > 0"><strong>Product Code</strong></th>
+                                <th><strong>Description</strong></th>
+                                <th class="text-right"><strong>Quantity</strong></th>
+                                <th>  </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="o.order_line" t-as="line">
+                                <td t-if="pc_cnt > 0">
+                                    <span t-field="line.product_id.default_code"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.name"/>
+                                </td>
+                                <td class="text-right" >
+                                    <span t-field="line.product_qty"/>
+                                    <span t-field="line.product_uom"/>
+                                </td>
+                                <td>  </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br/>
+
+                    <t t-if="o.notes">
+                        <strong>Notes:   </strong>
+                        <p>-------------------------------------</p>
+                        <p t-field="o.notes"/>
+                        <br/>
+                    </t>
+
+                    <t t-if="o.remarks">
+                        <strong>Remarks:   </strong>
+                        <p>-------------------------------------</p>
+                        <p t-field="o.remarks"/>
+                        <br/>
+                    </t>
+
+                    <div t-if="o.picking_type_id.warehouse_id">
+                        <strong>Our Delivery Address:   </strong>
+                        <p>-------------------------------------</p>
+                        <span t-field="o.company_id.name"/>
+                        <div t-field="o.picking_type_id.warehouse_id.partner_id"
+                            t-field-options='{"widget": "contact", "fields": ["address"], "no_marker": true, "phone_icons": false}'/>
+                    </div>
+
+                    <div class="oe_structure"/>
+                </div>
+            </t>
+        </template>
+
+    </data>
+</openerp>

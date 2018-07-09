@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--<data>-->
+
+        <!--<record id="view_pq_wiz_rfqlines_search" model="ir.ui.view">-->
+            <!--<field name="name">view_pq_wiz_rfqlines_search</field>-->
+            <!--<field name="model">pq.wizard.rfqlines</field>-->
+            <!--<field name="priority">1</field>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<tree string="Product Details">-->
+                    <!--<field name="product_id"/>-->
+                    <!--<field name="name"/>-->
+                    <!--<field name="product_uom_qty"/>-->
+                    <!--<field name="product_uom"/>-->
+                    <!--<field name="has_targetprice" string="" help="I have a Target Price"/>-->
+                    <!--<field name="target_price" string="Target Price"/>-->
+                    <!--<field name="currency_id" string=""/>-->
+                    <!--<field name="lead_id" invisible="1"/>-->
+                <!--</tree>-->
+            <!--</field>-->
+        <!--</record>-->
+
+        <record id="view_pq_wizard_enq2rfq_form" model="ir.ui.view">
+            <field name="name">pq_wizard_enq2rfq_form</field>
+            <field name="model">pq.wizard.rfq</field>
+            <field name="arch" type="xml">
+                <form string="Create RFQ">
+                    <separator string="Map a Product &amp; Suppliers to create RFQ"/>
+                    <group>
+                        <field name="lead_id" invisible="1"/>
+                    </group>
+                    <group>
+                        <notebook>
+                            <page string="Product Details">
+                               <field name="line_ids" colspan="4" widget="many2many" options="{'reload_on_button': True}">
+                                    <tree>
+                                        <field name="lead_id" invisible="1"/>
+                                        <field name="product_id"/>
+                                        <field name="name" string="Product Description"/>
+                                        <field name="product_uom_qty" />
+                                        <field name="product_uom" string="UoM" help="Unit of Measure" />
+                                        <field name="partner_ids" widget="many2many_tags"
+                                               context="{'search_default_supplier':1, 'default_supplier':1, 'default_customer':0, 'show_address': 1}"/>
+                                        <!--<button name="button_edit" type="object" icon="fa-pencil" />-->
+                                    </tree>
+                                   <form>
+                                       <sheet>
+                                            <group>
+                                                <group>
+                                                    <field name="product_id"/>
+                                                    <field name="name" string="Product Description"/>
+                                                    <field name="product_uom_qty" />
+                                                    <field name="product_uom" string="UoM" help="Unit of Measure" />
+                                                </group>
+                                                <group>
+                                                    <field name="has_targetprice" invisible="1"/>
+
+                                                    <field name="target_price" widget="monetary" options="{'currency_field': 'currency_id'}"
+                                                           help="Target Price/Cost quoted by the Customer" string="Target Price"
+                                                           readonly="1" attrs="{'invisible': [('has_targetprice', '!=', True)]}"/>
+
+                                                    <field name="partner_ids" widget="many2many_tags"
+                                                           context="{'search_default_supplier':1, 'default_supplier':1, 'default_customer':0, 'show_address': 1}"/>
+                                                    <field name="lead_id" invisible="1"/>
+                                                    <field name="currency_id" invisible="1"/>
+                                                </group>
+                                            </group>
+                                       </sheet>
+                                   </form>
+                               </field>
+                            </page>
+
+                            <!--<page string="Product Details">
+                               <field name="line_ids" colspan="4" widget="many2many" options="{'reload_on_button': True}">
+                                    <tree editable="bottom">
+                                        <field name="lead_id" invisible="1"/>
+                                        <field name="product_id"/>
+                                        <field name="name" string="Product Description"/>
+                                        <field name="product_uom_qty" />
+                                        <field name="product_uom" string="UoM" help="Unit of Measure" />
+                                        &lt;!&ndash;<field name="partner_ids" widget="many2many_tags"&ndash;&gt;
+                                               &lt;!&ndash;context="{'search_default_supplier':1, 'default_supplier':1, 'default_customer':0, 'show_address': 1}"/>&ndash;&gt;
+                                        <button name="button_edit" type="object" icon="fa-pencil" />
+                                    </tree>
+                               </field>
+                            </page>-->
+                            <page string="Suppliers">
+                                <label string="Set Supplier here to send RFQ for all the products." colspan="4"/>
+                                <field name="partner_ids" context="{'search_default_supplier':1, 'default_supplier':1, 'default_customer':0, 'show_address': 1}"/>
+                            </page>
+                        </notebook>
+                    </group>
+
+                    <footer>
+                        <button name="button_proceed" string="Proceed" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_enq2rfq_form" model="ir.actions.act_window">
+            <field name="name">Create RFQ</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pq.wizard.rfq</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_pq_wizard_enq2rfq_form"/>
+            <field name="target">new</field>
+        </record>
+
+
+        <record id="view_pq_wizard_rfqprodcompare_form" model="ir.ui.view">
+            <field name="name">view_pq_wizard_rfqprodcompare_form</field>
+            <field name="model">pq.wiz.rfq.productcompare</field>
+            <field name="arch" type="xml">
+                <form string="Product Price Compare">
+                    <separator string="Select an Enquiry to compare prices from various RFQ"/>
+                    <group>
+                        <group>
+                            <field name="lead_id"/>
+                        </group>
+                        <group>
+                            <field name="currency_id"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="button_proceed" string="Proceed" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_rfqprodcompare_form" model="ir.actions.act_window">
+            <field name="name">Product Price Compare</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pq.wiz.rfq.productcompare</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_pq_wizard_rfqprodcompare_form"/>
+            <field name="target">new</field>
+        </record>
+
+
+        <!--
+            Product Compare Lines (i.e RFQ Lines):
+            Search
+        -->
+        <record id="view_pq_wiz_rfqcomparelines_search" model="ir.ui.view">
+            <field name="name">Search</field>
+            <field name="model">pq.wiz.rfq.productcompare.lines</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="product_id"/>
+                    <field name="partner_id"/>
+                    <field name="order_id"/>
+                    <field name="name"/>
+                    <field name="company_id"/>
+                    <separator/>
+                    <group expand="0" string="Group By" colspan="16">
+                        <filter string="Product" context="{'group_by':'product_id'}"/>
+                        <filter string="Company" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                        <filter string="Vendor" context="{'group_by':'partner_id'}"/>
+                        <filter string="RFQ" domain="[]" context="{'group_by':'order_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!--
+            Product Compare Lines (i.e RFQ Lines):
+            Tree
+        -->
+        <record id="view_pq_wiz_rfqcomparelines_tree" model="ir.ui.view">
+            <field name="name">view_pq_wiz_rfqcomparelines_tree</field>
+            <field name="model">pq.wiz.rfq.productcompare.lines</field>
+            <field name="arch" type="xml">
+                <tree string="RFQ Products" create="false" delete="false" decoration-info="rfq_status=='approved'">
+                    <field name="order_id" string="RFQ Ref."/>
+                    <field name="lead_id"/>
+                    <field name="partner_id"/>
+                    <field name="product_id" context="{'partner_id': parent.partner_id}"/>
+                    <field name="name"/>
+                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                    <field name="enqln_qty"/>
+                    <field name="product_qty"/>
+                    <field name="product_uom" groups="product.group_uom"/>
+                    <!--<field name="org_price_unit1"/>-->
+                    <field name="price_unit1" string="Price Unit" widget="monetary"/>
+                    <field name="price_subtotal1" widget="monetary"/>
+                    <field name="price_total1" widget="monetary"/>
+                    <field name="rfq_status" readonly="1"/>
+                    <button name="button_toggle_approve" attrs="{'invisible': [('rfq_status', '=', 'approved')]}" string="Approve" type="object" icon="fa-check"/>
+                    <button name="button_toggle_reject" attrs="{'invisible': [('rfq_status', '=', 'rejected')]}" string="Reject" type="object" icon="fa-times"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="wiz_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_rfqcomparelines_form" model="ir.actions.act_window">
+            <field name="name">Product Price Compare</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pq.wiz.rfq.productcompare.lines</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_pq_wiz_rfqcomparelines_tree"/>
+            <field name="target">current</field>
+        </record>
+
+
+
+    <!--
+        Ask Revision
+    -->
+    <record id="view_ask_revision_form" model="ir.ui.view">
+        <field name="name">Ask for Revision</field>
+        <field name="model">pq.wiz.ask.revision</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form string="Ask for Revision">
+                <group class="mt0">
+                    <field name="note" nolabel="1"/>
+                </group>
+                <footer>
+                    <button name="button_proceed" string="Send" type="object" class="btn btn-primary"/>
+                    <button string="Cancel" class="btn btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ask_revision_form" model="ir.actions.act_window">
+        <field name="name">Ask for Revision</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">pq.wiz.ask.revision</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_ask_revision_form"/>
+        <field name="target">new</field>
+    </record>
+
+
+
+
+    <!--&lt;!&ndash;-->
+        <!--Connect Xero-->
+    <!--&ndash;&gt;-->
+    <!--<record id="view_connect_xero_form" model="ir.ui.view">-->
+        <!--<field name="name">Connect to Xero</field>-->
+        <!--<field name="model">wiz.connect.xero</field>-->
+        <!--<field name="priority">1</field>-->
+        <!--<field name="arch" type="xml">-->
+            <!--<form string="Connect to Xero">-->
+                <!--<sheet>-->
+                    <!--<h2>Sync data with Xero</h2>-->
+                    <!--<newline/>-->
+                    <!--<group>-->
+                        <!--<group>-->
+                            <!--<label string="Contacts"/>-->
+                            <!--<div>-->
+                                <!--<button name="action_import_contacts" string="Import Contacts" type="object"-->
+                                        <!--class="btn btn-primary" help="Fetch from Xero"/>-->
+                            <!--</div>-->
+                            <!--<newline/>-->
+                            <!--<label string=""/>-->
+                            <!--<div>-->
+                                <!--<button name="action_export_contacts" string="Export Contacts" type="object"-->
+                                        <!--class="btn btn-primary" help="Send to Xero"/>-->
+                            <!--</div>-->
+                        <!--</group>-->
+                        <!--<group>-->
+                            <!--<label string="Invoices"/>-->
+                            <!--<div>-->
+                                <!--<button name="action_import_invoices" string="Import Invoices" type="object"-->
+                                        <!--class="btn btn-primary" help="Fetch from Xero"/>-->
+                            <!--</div>-->
+                            <!--<newline/>-->
+                            <!--<label string=""/>-->
+                            <!--<div>-->
+                                <!--<button name="action_export_invoices" string="Export Invoices" type="object"-->
+                                        <!--class="btn btn-primary" help="Send to Xero"/>-->
+                            <!--</div>-->
+                        <!--</group>-->
+                        <!--<group>-->
+                            <!--<label string="Products"/>-->
+                            <!--<div>-->
+                                <!--<button name="action_import_products" string="Import Products" type="object"-->
+                                        <!--class="btn btn-primary" help="Fetch from Xero"/>-->
+                            <!--</div>-->
+                            <!--<newline/>-->
+                            <!--<label string=""/>-->
+                        <!--</group>-->
+                        <!--<group>-->
+                            <!--<label string="Accounts"/>-->
+                            <!--<div>-->
+                                <!--<button name="action_import_accounts" string="Import Accounts" type="object"-->
+                                        <!--class="btn btn-primary" help="Fetch from Xero"/>-->
+                            <!--</div>-->
+                            <!--<newline/>-->
+                            <!--<label string=""/>-->
+                        <!--</group>-->
+                        <!--<group>-->
+                            <!--<label string="Taxes"/>-->
+                            <!--<div>-->
+                                <!--<button name="action_import_taxes" string="Import Taxes" type="object"-->
+                                        <!--class="btn btn-primary" help="Fetch from Xero"/>-->
+                            <!--</div>-->
+                            <!--<newline/>-->
+                            <!--<label string=""/>-->
+                        <!--</group>-->
+                        <!--<group>-->
+                            <!--<label string="Payments"/>-->
+                            <!--<div>-->
+                                <!--<button name="action_import_payments" string="Import Payments" type="object"-->
+                                        <!--class="btn btn-primary" help="Fetch from Xero"/>-->
+                            <!--</div>-->
+                            <!--<newline/>-->
+                            <!--<label string=""/>-->
+                        <!--</group>-->
+                    <!--</group>-->
+                <!--</sheet>-->
+            <!--</form>-->
+        <!--</field>-->
+    <!--</record>-->
+
+    <!--<record id="action_connectxero_form" model="ir.actions.act_window">-->
+        <!--<field name="name">Import / Export</field>-->
+        <!--<field name="type">ir.actions.act_window</field>-->
+        <!--<field name="res_model">wiz.connect.xero</field>-->
+        <!--<field name="view_mode">form</field>-->
+        <!--<field name="view_id" ref="view_connect_xero_form"/>-->
+        <!--<field name="target">current</field>-->
+    <!--</record>-->
+
+    <!--<menuitem id="menu_xero_accounting" name="Xero Accounting"-->
+              <!--parent="account.menu_finance" sequence="5"-->
+              <!--groups="account.group_account_manager"/>-->
+
+    <!--<menuitem action="action_connectxero_form"-->
+              <!--id="menu_action_connectxero_form"-->
+              <!--parent="menu_xero_accounting"-->
+              <!--sequence="1"/>-->
+
+    <!--</data>-->
+</odoo>

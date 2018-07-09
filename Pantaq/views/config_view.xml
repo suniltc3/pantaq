@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <!--
+            Contacts (Customer): Action
+            Overridden
+        -->
+        <record id="base.action_partner_form" model="ir.actions.act_window">
+            <field name="name">Customers</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="context">{"search_default_customer":1}</field>
+            <field name="domain">[('customer','=',1)]</field>
+            <field name="search_view_id" ref="base.view_res_partner_filter"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a contact in your address book.
+              </p><p>
+                Odoo helps you easily track all activities related to
+                a customer; discussions, history of business opportunities,
+                documents, etc.
+              </p>
+            </field>
+        </record>
+
+        <!--
+            Contacts (Supplier): Action
+            Overridden
+        -->
+        <record id="base.action_partner_supplier_form" model="ir.actions.act_window">
+            <field name="name">Vendors</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="domain">[]</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="context">{'search_default_supplier': 1,'default_customer': 0,'default_supplier': 1}</field>
+            <field name="domain">[('supplier','=',1)]</field>
+            <field name="filter" eval="True"/>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a contact in your address book.
+              </p><p>
+                Odoo helps you easily track all activities related to
+                a supplier: discussions, history of purchases,
+                documents, etc.
+              </p>
+            </field>
+        </record>
+
+
+        <!--
+            Company Form
+            Inherited from Base:
+        -->
+        <record model="ir.ui.view" id="pq_view_company_inherit1_form">
+            <field name="name">pq_view_company_inherit1_form</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="model">res.company</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="before">
+                    <field name="code" placeholder="Eg. 'UK'" required="1"/>
+                </xpath>
+                <xpath expr="//notebook[last()]">
+                    <page string="'Configuration">
+                        <group>
+                            <group>
+                                <field name="include_tax_iq" />
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <!--
+            Partner Form
+            Inherited from Base:
+        -->
+        <record id="pq_view_partner_form_inherit" model="ir.ui.view">
+            <field name="name">pq_view_partner_form_inherit</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='purchase']" position="inside">
+                    <field name="vendor_type" attrs="{'invisible':[('supplier', '!=', True)]}"/>
+                    <field name="taxin_cost" attrs="{'invisible':[('supplier', '!=', True)]}"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <!--
+            Bank Form
+            Inherited from Base:
+        -->
+        <record model="ir.ui.view" id="pq_view_res_bank_form_inherit">
+            <field name="name">pq_view_res_bank_form_inherit</field>
+            <field name="inherit_id" ref="base.view_res_bank_form"/>
+            <field name="model">res.bank</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='bic']" position="after">
+                    <field name="pq_iban"/>
+                    <field name="sort_code"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <!--
+            Bank Partner Form
+            Inherited from Base:
+        -->
+        <record model="ir.ui.view" id="pq_view_res_partnerbank_form_inherit">
+            <field name="name">pq_view_res_partnerbank_form_inherit</field>
+            <field name="inherit_id" ref="base.view_partner_bank_form"/>
+            <field name="model">res.partner.bank</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='currency_id']" position="after">
+                    <field name="by_default"/>
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

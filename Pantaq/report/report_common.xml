@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+         <!--
+         Report: Layout
+        -->
+        <template id="pq_external_layout">
+
+            <!-- Multicompany -->
+            <t t-if="not o and doc">
+                <t t-set="o" t-value="doc"/>
+            </t>
+            <t t-if="o and 'company_id' in o">
+                <t t-set="company" t-value="o.company_id"></t>
+            </t>
+            <t t-if="not o or not 'company_id' in o">
+                <t t-set="company" t-value="res_company"></t>
+            </t>
+
+            <t t-call="Pantaq.pq_external_layout_header" />
+            <t t-raw="0" />
+            <t t-call="Pantaq.pq_external_layout_footer" />
+        </template>
+
+        <!--
+         Report: Header Layout
+        -->
+        <template id="pq_external_layout_header">
+            <div class="header">
+                <div class="row">
+                    <div class="col-xs-6" >
+                    </div>
+                    <div class="col-xs-5 col-xs-offset-1" style="padding:0px;">
+                        <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 100px; max-width: 300px;"/>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!--
+         Report: Footer Layout
+        -->
+        <template id="pq_external_layout_footer">
+            <div class="footer" style="font-size:7px; font-family: Calibri,Helvetica,Verdana,Arial,sans,Lucida Grande;">
+
+                <table class="table table-condensed">
+                    <tr>
+                        <td class="text-left" >
+                            <span t-raw="company.rml_footer"/>
+                        </td>
+                        <td class="text-right">
+                            Page: <span class="page"/> of <span class="topage"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </template>
+
+        <!--
+         Qweb: Contact
+        -->
+        <template id="pantaq_contact_inherit" name="Contact View Inherited" inherit_id="base.contact">
+            <xpath expr="//div[@itemprop='address']" position="replace">
+                <div itemprop="address" itemscope="itemscope" itemtype="http://schema.org/PostalAddress">
+                    <div t-if="address and 'address' in fields">
+                        <i t-if="not options.get('no_marker')" class='fa fa-map-marker'/> <span itemprop="streetAddress" t-raw="address.replace('\n', options.get('no_tag_br') and ', ' or ('&lt;br/&gt;%s' % ('' if options.get('no_marker') else '&amp;nbsp; &amp;nbsp; ')))"/>
+                    </div>
+                    <div t-if="city and 'city' in fields">
+                        <i class='fa fa-map-marker'/>
+                        <span itemprop="addressLocality" t-raw="city"/>,
+                        <span itemprop="addressCountry" t-raw="country_id"/>
+                    </div>
+                    <div t-if="phone and 'phone' in fields"><i t-if="options.get('phone_icons')" class='fa fa-phone'/>
+                        <span t-if="not options.get('phone_icons')">Tel: </span> <span itemprop="telephone" t-esc="phone"/></div>
+                    <div t-if="fax and 'fax' in fields"><i t-if="options.get('phone_icons')" class='fa fa-fax'/>
+                        <span t-if="not options.get('phone_icons')">Fax: </span> <span itemprop="faxNumber" t-esc="fax"/></div>
+
+                    <div t-if="email and 'email' in fields"><i t-if="options.get('phone_icons')" class='fa fa-envelope'/>
+                        <span t-if="not options.get('phone_icons')">Email: </span> <span itemprop="email" t-esc="email"/></div>
+
+                    <div t-if="website and 'website' in fields">
+                        <i t-if="options.get('phone_icons')" class='fa fa-globe'/>
+                        <span t-if="not options.get('phone_icons')">Web: </span>
+                        <span itemprop="website" t-esc="website[7:] if 'http://' in website else website"/>
+                    </div>
+
+                </div>
+            </xpath>
+        </template>
+
+
+
+         <!--
+         Paper Format:
+            overriden
+        -->
+        <record id="report.paperformat_euro" model="report.paperformat">
+            <field name="name">European A4</field>
+            <field name="default" eval="True" />
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">25</field>
+            <field name="margin_bottom">23</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">15</field>
+            <field name="dpi">90</field>
+        </record>
+
+    </data>
+</openerp>
